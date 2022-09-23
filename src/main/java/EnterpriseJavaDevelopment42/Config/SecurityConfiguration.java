@@ -44,9 +44,12 @@ public class SecurityConfiguration {
         http.httpBasic();
         http.csrf().disable();
         http.authorizeRequests()
-                .mvcMatchers(HttpMethod.GET,"/patients").hasRole("NURSE")
-                .mvcMatchers(HttpMethod.GET,"/doctors").hasRole("DOCTOR")
-                .mvcMatchers(HttpMethod.GET,"/**").hasRole("ADMIN")
+                .mvcMatchers(HttpMethod.GET,"/doctors").permitAll()
+                .mvcMatchers(HttpMethod.GET,"/patients").hasAnyRole("NURSE", "DOCTOR", "ADMIN")
+                .mvcMatchers(HttpMethod.GET,"/doctors/OFF").hasAnyRole("NURSE", "DOCTOR")
+                .mvcMatchers(HttpMethod.POST,"/newDoctor").hasRole("ADMIN")
+                .mvcMatchers(HttpMethod.POST,"/newPatient").hasAnyRole("NURSE", "DOCTOR")
+                .mvcMatchers(HttpMethod.PATCH,"/updatePatient/{id}").hasAnyRole("NURSE", "DOCTOR")
                 .anyRequest()
                 .permitAll();
 
